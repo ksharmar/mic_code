@@ -20,7 +20,7 @@ if __name__ == '__main__':
     --------------------
     """
     data = 'kwon'
-    out = 'kwon_testing_resp'
+    out = 'kwon_testing_ll'
     cascades_filename = '../data/{}/cascades.txt'.format(data)
     labels_filename = '../data/{}/labels.txt'.format(data)
     train_cascade_ids_filename = '../data/{}/train_ids.txt'.format(data)
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     lookback_count = 5
     max_iter = 10
     cascade_count = 111
-    num_negative_samples = 100
+    num_negative_samples = None
 
     if not os.path.exists('../output/{}'.format(out)):
         os.makedirs('../output/{}'.format(out))

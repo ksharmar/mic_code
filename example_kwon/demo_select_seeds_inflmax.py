@@ -14,7 +14,7 @@ if __name__ == '__main__':
     """Input setting
     --------------------
     """
-    data = 'kwon_testing'
+    data = 'kwon_testing_resp_1'
     
     pi_file = '../output/{}/pi.txt'.format(data)
     edges_file = '../output/{}/learned_graph.tsv'.format(data)
@@ -23,9 +23,9 @@ if __name__ == '__main__':
     save_influential_users_file = '../output/{}/selected_influential_users.tsv'.format(data)
     
     # number of most influential users to select with greedy algorithm
-    K = 100
+    K = 30
     num_simulations = 50
-    obs_steps = None
+    obs_steps = 10
     
     """Load graph and activation probabilities (learned and saved from parameter estimation)
     --------------------

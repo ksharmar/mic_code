@@ -3,14 +3,14 @@
 import snap
 import numpy as np
 import math
-np.random.seed(0)
+# np.random.seed(0)
 import pandas as pd
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 import time
 import itertools
 from multiprocessing import Pool, freeze_support
 
-# TODO not using negative sampling anymore! init of pi new!
+# init of pi new!
 
 const = 10e-5
 """
@@ -25,7 +25,6 @@ create_base_graph and train:
                 can be a union from all cascades, not just the windowed influencers,
                 reqd to match pre-computations step.) [computation time: neg_sampling removed]
 """
-
 
 def _softmax(x):
     """
@@ -49,12 +48,9 @@ def _metric(pred_train_labels, train_labels):
     # report flipped clustering
     precision, recall, fscore, support = precision_recall_fscore_support(
         train_labels, ~np.array(pred_train_labels, dtype=np.bool))
-    flip_acc = accuracy_score(train_labels, ~np.array(
-        pred_train_labels, dtype=np.bool))
-    report_flip = pd.concat(
-        map(pd.DataFrame, [[flip_acc, flip_acc], fscore, precision, recall, support]), axis=1)
-    report_flip.columns = ["accuracy", "f1-score",
-                           "precision", "recall", "support"]
+    flip_acc = accuracy_score(train_labels, ~np.array(pred_train_labels, dtype=np.bool))
+    report_flip = pd.concat(map(pd.DataFrame, [[flip_acc, flip_acc], fscore, precision, recall, support]), axis=1)
+    report_flip.columns = ["accuracy", "f1-score", "precision", "recall", "support"]
     print("Flipped prediction groups")
     print(report_flip)
     return max(acc, flip_acc)
@@ -68,8 +64,8 @@ def _update_act_prob(old_act_prob, denom_pl, denom_mi, numer_pl, component):
     d = denom_pl[component] + denom_mi[component]
     if d == 0: d = 10e-5
     new_act_prob = old_act_prob * numer_pl[component] * 1.0 / d
-#     if new_act_prob > 1: new_act_prob = 1.0
-#     elif new_act_prob < 0: new_act_prob = 0.0
+    if new_act_prob > 1: new_act_prob = 1.0
+    elif new_act_prob < 0: new_act_prob = 0.0
     return new_act_prob
 
 
@@ -103,30 +99,6 @@ def _compute_ll(cascade, base_graph, lookback_count, index_dict, set_required_v_
                 # v inactive in cascade, u active in cascade
                 c0_prod_v_for_S[v] *= 1 - attr0
                 c1_prod_v_for_S[v] *= 1 - attr1
-
-#     # unoptimized version
-#     for EI in base_graph.Edges():
-#         u = EI.GetSrcNId()
-#         v = EI.GetDstNId()
-        
-#         attr0 = base_graph.GetFltAttrDatE(EI, "act_prob_0")
-#         attr1 = base_graph.GetFltAttrDatE(EI, "act_prob_1")
-        
-#         if v in index_dict and u in index_dict:
-#             # both are active in S, and we need u to be within lookback of v
-#             tu = index_dict[u]
-#             tv = index_dict[v]
-#             if tu <= tv - 1 and \
-#                     (lookback_count is None or tv <= tu + lookback_count):
-#                 c0_prod_v_for_S[v] *= 1 - attr0
-#                 c1_prod_v_for_S[v] *= 1 - attr1
-#             print('here', u, v, u in index_dict, v in index_dict)
-
-#         if v not in index_dict and u in index_dict:
-#             # v inactive in cascade, u active in cascade
-#             c0_prod_v_for_S[v] *= 1 - attr0
-#             c1_prod_v_for_S[v] *= 1 - attr1
-#             print('here too', u, v, u in index_dict, v in index_dict)
     
     # sum up the values for log likelihood (over active nodes in S) except seed node
     active_users_in_S = cascade[1:, 0]
@@ -249,7 +221,8 @@ def train(base_graph, train_cascades, train_labels, num_negative_samples=None, l
             gamma0_d = math.log(const + pi0) + ll_cascade_0
             gamma1_d = math.log(const + pi1) + ll_cascade_1
             # print(ll_cascade_0, ll_cascade_1)
-            ll_cascades += ll_cascade_0 + ll_cascade_1
+            ll_cascade = np.log(const + pi0 * np.exp(ll_cascade_0) + pi1 * np.exp(ll_cascade_1))  # ll_cascade_0 + ll_cascade_1
+            ll_cascades += ll_cascade
             gamma0_list[i], gamma1_list[i] = _softmax([gamma0_d, gamma1_d])
         print('done E-step: update responsibilities gamma', ll_cascades)
         # print(gamma0_list)
@@ -335,7 +308,8 @@ def last_evaluation(pi0, pi1, base_graph, train_cascades, train_labels, num_nega
             cascade, base_graph, lookback_count, index_dict_list[i], None, num_negative_samples)
         gamma0_d = math.log(const + pi0) + ll_cascade_0
         gamma1_d = math.log(const + pi1) + ll_cascade_1
-        ll_cascades += ll_cascade_0 + ll_cascade_1
+        ll_cascade = np.log(const + pi0 * np.exp(ll_cascade_0) + pi1 * np.exp(ll_cascade_1))  # ll_cascade_0 + ll_cascade_1
+        ll_cascades += ll_cascade
         gamma0_list[i], gamma1_list[i] = _softmax([gamma0_d, gamma1_d])
     print('done: recompute responsibilities gamma')
 
@@ -343,3 +317,29 @@ def last_evaluation(pi0, pi1, base_graph, train_cascades, train_labels, num_nega
     _metric(pred_train_labels, train_labels)
     print('done evaluation of clustering accuracy at end at pi = [{}, {}], ll={}.'.format(pi0, pi1, ll_cascades))
     return np.array(gamma0_list), np.array(gamma1_list), np.array(train_labels)
+
+
+
+#     # unoptimized version
+#     for EI in base_graph.Edges():
+#         u = EI.GetSrcNId()
+#         v = EI.GetDstNId()
+        
+#         attr0 = base_graph.GetFltAttrDatE(EI, "act_prob_0")
+#         attr1 = base_graph.GetFltAttrDatE(EI, "act_prob_1")
+        
+#         if v in index_dict and u in index_dict:
+#             # both are active in S, and we need u to be within lookback of v
+#             tu = index_dict[u]
+#             tv = index_dict[v]
+#             if tu <= tv - 1 and \
+#                     (lookback_count is None or tv <= tu + lookback_count):
+#                 c0_prod_v_for_S[v] *= 1 - attr0
+#                 c1_prod_v_for_S[v] *= 1 - attr1
+#             print('here', u, v, u in index_dict, v in index_dict)
+
+#         if v not in index_dict and u in index_dict:
+#             # v inactive in cascade, u active in cascade
+#             c0_prod_v_for_S[v] *= 1 - attr0
+#             c1_prod_v_for_S[v] *= 1 - attr1
+#             print('here too', u, v, u in index_dict, v in index_dict)

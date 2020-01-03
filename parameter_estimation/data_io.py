@@ -22,17 +22,14 @@ def save_estimated_parameters(pi, base_graph, idx2u, save_pi_file, save_edges_fi
     """
     SAVE EDGES AND ATTRIBUTES as TSV(u, v, act_0, act_1)  indices not ids
     """
-    # change later: to save as raw binary
-    # snap.SaveEdgeList(base_graph, save_graph_file, "Save as tab-separated list of edges")
-
     act_0, act_1, list_u, list_v = [], [], [], []
     for EI in base_graph.Edges():
-        u = EI.GetSrcNId()
-        v = EI.GetDstNId()
-        list_u.append(u)
-        list_v.append(v)
-        act_0.append(base_graph.GetFltAttrDatE(EI, "act_prob_0"))
-        act_1.append(base_graph.GetFltAttrDatE(EI, "act_prob_1"))
+        u, v = EI.GetSrcNId(), EI.GetDstNId() 
+        p0 = base_graph.GetFltAttrDatE(EI, "act_prob_0")
+        p1 = base_graph.GetFltAttrDatE(EI, "act_prob_1")
+        if p0 == 0 and p1 == 0: continue
+        list_u.append(u); list_v.append(v)
+        act_0.append(p0); act_1.append(p1)
 
     df = pd.DataFrame({'u': list_u, 'v': list_v, 'act_0': act_0, 'act_1': act_1})
     # df['u_id'] = df['u_index'].apply(lambda i: idx2u[i])
