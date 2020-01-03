@@ -1,8 +1,0 @@
-{
-  "training_cascades_file": "pathtotraincascadesfile",
-  "links_file": "pathtocsvfile",
-  "lookback_count": -1,
-  "num_negative_samples": "num of inactive users to sample for computing log likelihood efficiently",
-  "max_tr_iters": 100,
-  "freq_convergence_test": 5
-}
