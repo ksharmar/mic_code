@@ -1,0 +1,225 @@
+KWON **
+------
+user_max = 1000 *
+extra_users_len = 10
+edge_thr = 1
+lookback_count = 5 *
+max_iter = 10
+cascade_count = 111
+num_negative_samples = 100 (Random sampling: 100)
+    
+num_nodes=1987
+num_edges=48557
+num_train_cascades=111
+num_test_cascades=0
+done loading data...
+done setting index dict
+done setting random initialization
+start: training
+step = 0 / 10 in time till now = 0.000
+
+Clustering results: Classification report (Comp 0 => Label 0, Comp 1 => Label 1)
+   accuracy  f1-score  precision    recall  support
+0  0.405405  0.528571   0.415730  0.725490       51
+1  0.405405  0.195122   0.363636  0.133333       60
+Flipped prediction groups (Comp 1 => Label 0, Comp 0 => Label 1)
+   accuracy  f1-score  precision    recall  support
+0  0.594595  0.383562   0.636364  0.274510       51
+1  0.594595  0.697987   0.584270  0.866667       60
+Since the flipped is better in accuracy (choose mapping of second i.e. true news = label 0 = comp 1)
+(fake news = label 1 = comp 0 that means fake_component = 0 in 'kwon' output dir)
+
+graph created: 1987 48557
+Begin greedy seed selection:
+running heapify
+done heapify
+selected 0 ( 1623, 11.80 )
+selected 1  ( 1237, 9.20 )
+selected 2  ( 419, 9.30 )
+selected 3  ( 846, 9.70 )
+selected 4  ( 1499, 8.90 )
+End greedy seed selection in 102.74
+component 0: [1623, 1237, 419, 846, 1499] 48.9
+Begin greedy seed selection:
+running heapify
+done heapify
+selected 0 ( 1623, 12.30 )
+selected 1  ( 1237, 9.80 )
+selected 2  ( 732, 9.50 )
+selected 3  ( 610, 9.70 )
+selected 4  ( 216, 10.30 )
+End greedy seed selection in 100.65
+component 1: [1623, 1237, 732, 610, 216] 51.6
+saved selected influential users for both components at ../output/kwon/selected_influential_users.tsv
+=> Note that comp0 and comp1 may correspond to true/fake (mapping is known by cross-validation)
+finished program.
+
+
+KWON Old:
+--------
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.630631  0.506024   0.656250  0.411765       51
+1  0.630631  0.705036   0.620253  0.816667       60
+
+
+KWON-1
+-------
+user_max = 1000
+extra_users_len = 10
+edge_thr = 1
+lookback_count = 5
+max_iter = 20
+cascade_count = 111
+num_negative_samples = None
+    
+num_nodes=1987
+num_edges=48557
+num_train_cascades=111
+num_test_cascades=0
+done loading data...
+done setting index dict
+done setting random initialization
+start: training
+step = 0 / 20 in time till now = 0.000
+
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.423423  0.567568   0.432990  0.823529       51
+1  0.423423  0.135135   0.357143  0.083333       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.576577  0.276923   0.642857  0.176471       51
+1  0.576577  0.700637   0.567010  0.916667       60
+done evaluation of clustering accuracy at end at pi = [0.6218070770317699, 0.37819292296823015], ll=-3611776.719944206.
+Program finished in 389.952 seconds
+
+
+KWON Random sampling: 100 (full log)
+----------------------
+done E-step: update responsibilities gamma -203672.0918169857
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0   0.45045  0.061538   0.142857  0.039216       51
+1   0.45045  0.611465   0.494845  0.800000       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0   0.54955  0.662162   0.505155  0.960784       51
+1   0.54955  0.324324   0.857143  0.200000       60
+done evaluation of clustering accuracy at iter = 0 at pi = [0.5, 0.5]
+step = 1 / 10 in time till now = 17.715
+done E-step: update responsibilities gamma -201055.79298884858
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.459459  0.166667   0.285714  0.117647       51
+1  0.459459  0.600000   0.500000  0.750000       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.540541  0.638298   0.500000  0.882353       51
+1  0.540541  0.370370   0.714286  0.250000       60
+done evaluation of clustering accuracy at iter = 1 at pi = [0.49999390648329434, 0.5000060935167057]
+step = 2 / 10 in time till now = 35.201
+done E-step: update responsibilities gamma -199595.56447537226
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.432432  0.577181   0.438776  0.843137       51
+1  0.432432  0.136986   0.384615  0.083333       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.567568  0.250000   0.615385  0.156863       51
+1  0.567568  0.696203   0.561224  0.916667       60
+done evaluation of clustering accuracy at iter = 2 at pi = [0.5092964408017625, 0.4907035591982375]
+step = 3 / 10 in time till now = 52.589
+done E-step: update responsibilities gamma -198094.69044138477
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.513514      0.25   0.428571  0.176471       51
+1  0.513514      0.64   0.533333  0.800000       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.486486  0.595745   0.466667  0.823529       51
+1  0.486486  0.296296   0.571429  0.200000       60
+done evaluation of clustering accuracy at iter = 3 at pi = [0.4968264366065448, 0.5031735633934552]
+step = 4 / 10 in time till now = 70.014
+done E-step: update responsibilities gamma -197093.7491283183
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.423423  0.542857   0.426966  0.745098       51
+1  0.423423  0.219512   0.409091  0.150000       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.576577  0.356164   0.590909  0.254902       51
+1  0.576577  0.684564   0.573034  0.850000       60
+done evaluation of clustering accuracy at iter = 4 at pi = [0.5023622256386076, 0.49763777436139245]
+step = 5 / 10 in time till now = 87.406
+done E-step: update responsibilities gamma -196576.08873134438
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.405405  0.528571   0.415730  0.725490       51
+1  0.405405  0.195122   0.363636  0.133333       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.594595  0.383562   0.636364  0.274510       51
+1  0.594595  0.697987   0.584270  0.866667       60
+done evaluation of clustering accuracy at iter = 5 at pi = [0.5047562222172804, 0.49524377778271955]
+step = 6 / 10 in time till now = 104.794
+done E-step: update responsibilities gamma -196526.97154327095
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.414414  0.539007   0.422222  0.745098       51
+1  0.414414  0.197531   0.380952  0.133333       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.585586  0.361111   0.619048  0.254902       51
+1  0.585586  0.693333   0.577778  0.866667       60
+done evaluation of clustering accuracy at iter = 6 at pi = [0.5089141323400989, 0.49108586765990114]
+step = 7 / 10 in time till now = 122.171
+done E-step: update responsibilities gamma -196619.70386936452
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.396396  0.531469   0.413043  0.745098       51
+1  0.396396  0.151899   0.315789  0.100000       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.603604  0.371429   0.684211  0.254902       51
+1  0.603604  0.710526   0.586957  0.900000       60
+done evaluation of clustering accuracy at iter = 7 at pi = [0.5234131630801343, 0.4765868369198657]
+step = 8 / 10 in time till now = 139.638
+done E-step: update responsibilities gamma -196774.0353645838
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.405405  0.541667   0.419355  0.764706       51
+1  0.405405  0.153846   0.333333  0.100000       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.594595  0.347826   0.666667  0.235294       51
+1  0.594595  0.705882   0.580645  0.900000       60
+done evaluation of clustering accuracy at iter = 8 at pi = [0.5272967138609577, 0.47270328613904233]
+step = 9 / 10 in time till now = 157.069
+done E-step: update responsibilities gamma -196947.06057647814
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.414414  0.551724   0.425532  0.784314       51
+1  0.414414  0.155844   0.352941  0.100000       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.585586  0.323529   0.647059  0.215686       51
+1  0.585586  0.701299   0.574468  0.900000       60
+done evaluation of clustering accuracy at iter = 9 at pi = [0.5396346326503884, 0.46036536734961164]
+done: training
+Training time = {} for {} users 174.97804284095764
+saved pi0, pi1 at ../output/kwon/pi.txt
+saved_graph at location: ../output/kwon/learned_graph.tsv
+saved_idx2u at location: ../output/kwon/idx2u.txt
+finished saving learned parameters..
+done setting index dict
+done: recompute responsibilities gamma
+Clustering results: Classification report
+   accuracy  f1-score  precision    recall  support
+0  0.405405  0.528571   0.415730  0.725490       51
+1  0.405405  0.195122   0.363636  0.133333       60
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.594595  0.383562   0.636364  0.274510       51
+1  0.594595  0.697987   0.584270  0.866667       60
+done evaluation of clustering accuracy at end at pi = [0.5478702243481502, 0.45212977565184975], ll=-3832160.966079203.
