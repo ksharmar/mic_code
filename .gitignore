@@ -1,4 +1,5 @@
 data/
 output/
-**/.ipynb
-**/.pyc
+**/*.ipynb_checkpoints
+**/*.pyc
+**/*.__pycache__
