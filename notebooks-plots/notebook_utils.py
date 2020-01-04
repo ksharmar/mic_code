@@ -22,8 +22,20 @@ def read_cascades_file(cascades_filename):
     return cascades
 
 
+def indexed_cascades(raw_cascades):
+    cascades = []
+    for cas in raw_cascades:
+        
+        u_t = line.strip("\n").split(",")
+        u = list(map(int, u_t[0::2]))  # int
+        t = list(map(float, u_t[1::2]))  # float
+        cascade = np.vstack([u, t]).transpose()
+        cascades.append(cascade)
+    return cascades
+
+
 def get_engagement_counts(true_cascades, fake_cascades):
-    # distribution of engagement counts
+    # distribution of engagement counts (returns user_ids)
     u_t = {}
     for cas in true_cascades:
         for u in cas[:,0]:
@@ -42,9 +54,45 @@ def get_engagement_counts(true_cascades, fake_cascades):
     return u_t, u_f, sorted_t, sorted_f
 
 
+def get_relative_appearance_in_fake(u_t, u_f, true_infl, fake_infl):
+    # inputs contain user ids
+    value_true, value_fake = [], []
+    for u in true_infl:
+        t_count = 0
+        f_count = 0 
+        i = int(u) # i = str(u)
+        if i in u_t:
+            t_count = u_t[i]
+        if i in u_f:
+            f_count = u_f[i]
+        tot = t_count + f_count
+        if tot == 0:
+            continue
+        # print("u", u, t_count, f_count, 1.0*t_count/tot, 1.0*f_count/tot)
+        value_true.append(100.0 * f_count/tot)
+    # print("brk")
+    for u in fake_infl:
+        t_count = 0
+        f_count = 0 
+        i = int(u) # i = str(u)
+        if i in u_t:
+            t_count = u_t[i]
+        if i in u_f:
+            f_count = u_f[i]
+        tot = t_count + f_count
+        if tot == 0:
+            continue
+        # print("u", u, t_count, f_count, 1.0*t_count/tot, 1.0*f_count/tot)
+        value_fake.append(100.0 * f_count/tot)
+    vt, vf = np.array(value_true), np.array(value_fake)
+    ind = np.where(vt == 100)[0]
+    # print(ind)
+    # vt[ind] = 0
+    # print(true_infl[ind])
+    return vt, vf
+    
 
 def find_tweetid_for_userid(list_userids):
-    
     
     return list_tweetids
 

@@ -20,7 +20,7 @@ if __name__ == '__main__':
     --------------------
     """
     data = 'kwon'
-    out = 'kwon_testD'
+    out = 'all_kwon/kwon_init'
     cascades_filename = '../data/{}/cascades.txt'.format(data)
     labels_filename = '../data/{}/labels.txt'.format(data)
     train_cascade_ids_filename = '../data/{}/train_ids.txt'.format(data)
@@ -33,14 +33,13 @@ if __name__ == '__main__':
     user_max = 2930  # atleast 5 engagements
     extra_users_len, min_cas_length = 0, 1   
     
-    edge_thr = 2
+    edge_thr = 5
     lookback_count = 5
     
     cascade_count = 111
     max_iter = 10
-    num_negative_samples = None  # unused
+    num_negative_samples = None
     
-
     if not os.path.exists('../output/{}'.format(out)):
         os.makedirs('../output/{}'.format(out))
     

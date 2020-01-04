@@ -10,8 +10,6 @@ import time
 import itertools
 from multiprocessing import Pool, freeze_support
 
-# init of pi new!
-
 const = 10e-5
 """
 Parameter estimation under discrete IC model (Saito). create_base_graph and train. it will add the "act_prob" inferred influnce as edge attribute. relaxation for discrete time as follows - consider memsize (window) of influencers. we do not choose to discretize time as that could mistakenly club wrong sets. edges u->v (if u can influnece v) or (v follows u). Pre-computations in create_base_graph [needed later in train: when creating u->v links with lookback limits]: "suvmi" and "suvpl" (subset of train_cascades contains S_{u,v}^{minus} as defined in Saito et al reqd for dQ=0 step).
@@ -31,7 +29,11 @@ def _softmax(x):
     numerically stable softmax computation
     """
     e_x = np.exp(x - np.max(x))
-    return e_x / e_x.sum()
+    softmax = e_x / e_x.sum()
+    # argmax (binarize)
+    # a = np.zeros(len(softmax))
+    # np.put(a, np.argmax(softmax), 1)
+    return softmax
 
 
 def _metric(pred_train_labels, train_labels):
@@ -187,10 +189,10 @@ def train(base_graph, train_cascades, train_labels, num_negative_samples=None, l
     base_graph.AddFltAttrE("act_prob_1")  # nothing happens if it already exists
     # (cascade_ind: set(nodes v) for each we need pvS)
     required_pvS = [set() for _ in train_cascades]
-    for EI in base_graph.Edges():
+    for EI in base_graph.Edges():        
         base_graph.AddFltAttrDatE(EI, np.random.uniform(0.1, 0.3), "act_prob_0")
         base_graph.AddFltAttrDatE(EI, np.random.uniform(0.1, 0.3), "act_prob_1")
-        v = EI.GetDstNId()
+        u, v = EI.GetSrcNId(), EI.GetDstNId()
         suvpl_str = base_graph.GetStrAttrDatE(EI, "suvpl")
         suvpl_cascades = suvpl_str.split(",")
         for cascade_ind_str in suvpl_cascades:
@@ -198,6 +200,8 @@ def train(base_graph, train_cascades, train_labels, num_negative_samples=None, l
                 continue
             cascade_ind = int(cascade_ind_str)
             required_pvS[cascade_ind].add(v)
+        # for edges with no cascade in a component, make puv_comp = 0 from randominit
+        
     print('done setting random initialization')
     # return pi0, pi1
 
@@ -281,9 +285,10 @@ def train(base_graph, train_cascades, train_labels, num_negative_samples=None, l
             old_act_prob_1 = base_graph.GetFltAttrDatE(EI, "act_prob_1")
             new_act_prob_1 = _update_act_prob(
                 old_act_prob_1, denom_pl, denom_mi, numer_pl, 1)
-            base_graph.AddFltAttrDatE(EI, new_act_prob_1, "act_prob_1")
+            base_graph.AddFltAttrDatE(EI, new_act_prob_1, "act_prob_1")           
 
     print("done: training")
+
     return pi0, pi1
 
 
