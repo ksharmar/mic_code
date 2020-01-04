@@ -53,13 +53,18 @@ def _convert_cascades_by_index(raw_observed_cascades, u2idx):
         list of user_idx, timestamp array (one array per cascade) as a np.array
     """
     indexed_cascades = []
-    for cascade in raw_observed_cascades:     
-        mask = np.isin(cascade, u2idx.keys())
+    counter = 0
+    for cascade in raw_observed_cascades:
         filtered = cascade[np.isin(cascade[:,0], list(u2idx.keys()))] 
-        filtered[:,0] = np.vectorize(u2idx.get)(filtered[:,0])
-        indexed_cascades.append(filtered)
+        if len(filtered) == 0:
+            counter += 1
+            indexed_cascades.append([])
+        else:
+            filtered[:,0] = np.vectorize(u2idx.get)(filtered[:,0])
+            indexed_cascades.append(filtered)
+    print('num_empty_cascades', counter)
     return np.array(indexed_cascades)
-#    for cascade in raw_observed_cascades: 
+#     for cascade in raw_observed_cascades: 
 #         u_ids = []
 #         t = []
 #         for u_str, timestamp in zip(cascade[:, 0], cascade[:, 1]):
@@ -70,7 +75,7 @@ def _convert_cascades_by_index(raw_observed_cascades, u2idx):
 #         u_ids = np.array(u_ids)
 #         t = np.array(t)
 #         indexed_cascades.append(np.vstack([u_ids, t]).transpose())
-#    return np.array(indexed_cascades)
+#     return np.array(indexed_cascades)
 
 
 def _build_user_index(raw_observed_cascades, user_max, extra_users_len):
@@ -244,7 +249,7 @@ def _create_base_graph(train_cascades, idx2u, lookback_count=None, edge_thr=5):
 
 def load_data_for_parameter_estimation(cascades_filename, labels_filename,
     train_cascade_ids_filename, user_max, extra_users_len, lookback_count,
-    edge_thr, cascade_count):
+    edge_thr, cascade_count, min_cas_length):
     """
     Load raw dataset, prune cascades and build index by most active users (and extra_users_len),
     build indexed train_cascades and val_cascades (by filtering on input train cascade ids),
@@ -305,9 +310,17 @@ def load_data_for_parameter_estimation(cascades_filename, labels_filename,
     test_cascades = indexed_cascades[test_mask]
     train_labels = raw_labels[train_cascade_ids]
     test_labels = raw_labels[test_mask]
-    print("creating base_graph...")
+    # keep specified num of cascades
     train_cascades = train_cascades[:cascade_count]
     train_labels = train_labels[:cascade_count]
+    # remove empty train cascades
+    cas_lens = np.array([len(cas) for cas in train_cascades])
+    filtered_train_cids = np.where(cas_lens >= min_cas_length)[0]
+    train_cascades = train_cascades[filtered_train_cids]
+    train_labels = train_labels[filtered_train_cids]
+    uniq, uniq_counts = np.unique(train_labels, return_counts=True)
+    print('label distribution after discarding small cascades:', uniq, uniq_counts)
+    print("creating base_graph...")
     # create base graph from train cascades
     base_graph = _create_base_graph(train_cascades, idx2u, lookback_count, edge_thr)
-    return u2idx, idx2u, train_cascades, test_cascades, train_labels, test_labels, base_graph
+    return u2idx, idx2u, train_cascades, train_labels, filtered_train_cids, test_cascades, test_labels, base_graph

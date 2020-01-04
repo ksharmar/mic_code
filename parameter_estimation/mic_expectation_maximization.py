@@ -199,6 +199,7 @@ def train(base_graph, train_cascades, train_labels, num_negative_samples=None, l
             cascade_ind = int(cascade_ind_str)
             required_pvS[cascade_ind].add(v)
     print('done setting random initialization')
+    # return pi0, pi1
 
     print("start: training")
     # best_graph = snap.ConvertGraph(type(base_graph), base_graph)  # copy graph (but it does not deepcopy)

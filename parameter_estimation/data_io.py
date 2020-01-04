@@ -12,6 +12,18 @@ influential_users_file (TSV) [K, selected_0, selected_1, fs0, fs1]
 """
 
 
+class Runlog(object):
+    def __init__(self, *files):
+        self.files = files
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+            f.flush()  # If you want the output to be visible immediately
+    def flush(self) :
+        for f in self.files:
+            f.flush()
+            
+
 def save_estimated_parameters(pi, base_graph, idx2u, save_pi_file, save_edges_file, save_idx2u_file):
     """
     SAVE PI

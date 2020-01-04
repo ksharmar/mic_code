@@ -20,7 +20,7 @@ if __name__ == '__main__':
     --------------------
     """
     data = 'kwon'
-    out = 'kwon_testing_ll'
+    out = 'kwon_testD'
     cascades_filename = '../data/{}/cascades.txt'.format(data)
     labels_filename = '../data/{}/labels.txt'.format(data)
     train_cascade_ids_filename = '../data/{}/train_ids.txt'.format(data)
@@ -28,17 +28,24 @@ if __name__ == '__main__':
     save_edges_file = '../output/{}/learned_graph.tsv'.format(out)  # save_graph_file = '../output/{}/learned.graph'
     save_idx2u_file = '../output/{}/idx2u.txt'.format(out)
     save_resp_file = '../output/{}/resp.txt'.format(out)  # responsibilities (preds) [gamma_0, gamma_1, target_label]
-
-    user_max = 1000
-    extra_users_len = 10
-    edge_thr = 1
+    log_file = '../output/{}/log.txt'.format(out)
+    
+    user_max = 2930  # atleast 5 engagements
+    extra_users_len, min_cas_length = 0, 1   
+    
+    edge_thr = 2
     lookback_count = 5
-    max_iter = 10
+    
     cascade_count = 111
-    num_negative_samples = None
+    max_iter = 10
+    num_negative_samples = None  # unused
+    
 
     if not os.path.exists('../output/{}'.format(out)):
         os.makedirs('../output/{}'.format(out))
+    
+    logf = open(log_file, 'w')
+    sys.stdout = data_io.Runlog(sys.stdout, logf)  # This will go to stdout and the file out.txt
     
     """Print information, create output dir if not exists
     --------------------
@@ -47,17 +54,17 @@ if __name__ == '__main__':
     print(cascades_filename)
     print(labels_filename)
     print(train_cascade_ids_filename)
-    print("User max, Extra users len, Edge thr, Cascade count",
-          user_max, extra_users_len, edge_thr, cascade_count)
-    print("Num neg samples, lookback_count, max_iter", num_negative_samples,
-          lookback_count, max_iter)
+    print('user_max=', user_max)
+    print('extra_users_len/min_cas_length=', extra_users_len, min_cas_length)
+    print('edge_thr,lookback_count=', edge_thr, lookback_count)
+    print('cascade_count, max_iter, num_negative_samples=', cascade_count, max_iter, num_negative_samples)
 
     """Load data
     --------------------
     """
     print("loading data...")
-    u2idx, idx2u, train_cascades, test_cascades, train_labels, test_labels, base_graph = load_data_for_parameter_estimation(
-        cascades_filename, labels_filename, train_cascade_ids_filename, user_max, extra_users_len, lookback_count, edge_thr, cascade_count)
+    u2idx, idx2u, train_cascades, train_labels, filtered_train_cids, test_cascades, test_labels, base_graph = load_data_for_parameter_estimation(
+        cascades_filename, labels_filename, train_cascade_ids_filename, user_max, extra_users_len, lookback_count, edge_thr, cascade_count, min_cas_length)
     print("base_graph information...")
     print("num_nodes={}".format(base_graph.GetNodes()))
     print("num_edges={}".format(base_graph.GetEdges()))
@@ -86,7 +93,7 @@ if __name__ == '__main__':
     """
     # unsupervised evaluation on train cascades
     gamma_0, gamma_1, targets = last_evaluation(pi0, pi1, base_graph, train_cascades, train_labels, num_negative_samples, lookback_count)
-    stacked = np.vstack([gamma_0, gamma_1, targets]).transpose()
+    stacked = np.vstack([gamma_0, gamma_1, targets, filtered_train_cids]).transpose()
     np.savetxt(save_resp_file, stacked)
     print('finished saving responsibilities.')
     print("Program finished in {} seconds".format(round(time.time()-start, 3)))
