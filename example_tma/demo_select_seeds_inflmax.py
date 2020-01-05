@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import sys
+import sys, os, time
 sys.path.append("../")
 from simulator.greedy_clef import select_seeds_greedy_clef, InfluenceEstimator
 import snap
@@ -14,18 +14,27 @@ if __name__ == '__main__':
     """Input setting
     --------------------
     """
-    data = 'twitter_ma'
+    data = 'all_tma/tma_D'
     
-    pi_file = '../output/{}/pi.txt'
-    edges_file = '../output/{}/learned_graph.tsv'
-    idx2u_file = '../output/{}/idx2u.txt'
+    pi_file = '../output/{}/pi.txt'.format(data)
+    edges_file = '../output/{}/learned_graph.tsv'.format(data)
+    idx2u_file = '../output/{}/idx2u.txt'.format(data)
     
-    save_influential_users_file = '../output/{}/selected_influential_users.tsv'
+    save_influential_users_file = '../output/{}/selected_influential_users.tsv'.format(data)
+    
+    log_file = '../output/{}/infmax_log.txt'.format(data)
     
     # number of most influential users to select with greedy algorithm
-    K = 100 
-    num_simulations = 100
-    obs_steps = None
+    K = 100
+    num_simulations = 300
+    obs_steps = 30
+    
+    logf = open(log_file, 'w')
+    sys.stdout = data_io.Runlog(sys.stdout, logf)  # This will go to stdout and the file out.txt
+    
+    print('K = {}'.format(K))
+    print('num_simulations = {}'.format(num_simulations))
+    print('obs_steps = {}'.format(obs_steps))
     
     """Load graph and activation probabilities (learned and saved from parameter estimation)
     --------------------
@@ -55,5 +64,5 @@ if __name__ == '__main__':
     """
     data_io.save_selected_influential_users(selected_0, influence_0, selected_1, influence_1, save_influential_users_file)
     
-    print('=> Note that comp0 and comp1 may correspond to true/fake (mapping is known by cross-validation)').
+    print('=> Note that comp0 and comp1 may correspond to true/fake (mapping is known by cross-validation)')
     print('finished program.')

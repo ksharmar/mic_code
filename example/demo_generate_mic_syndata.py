@@ -22,14 +22,14 @@ if __name__=="__main__":
     num_nodes = 1024
     
     pi0 = 0.5
-    save_dir = graph_dir # + 'mix_{}/'.format(pi0)
+    save_dir = graph_dir + 'll_{}/'.format(pi0)
     labels_file = save_dir + 'labels.txt'
     cascades_file = save_dir + 'cascades.txt'
     train_ids_file = save_dir + 'train_ids.txt'
     
-    num_unique_seedsets = 750  # eg. 1024 unique seed sets x (5, 10) times for cascades
-    min_replications = 5
-    max_replications = 10
+    num_unique_seedsets = 1  # eg. 1024 unique seed sets x (5, 10) times for cascades
+    min_replications = 1
+    max_replications = 2
     obs_steps = None
     
     # First: generate graph.txt (list of edges) from snap library c++ cmd line as follows

@@ -1,0 +1,60 @@
+==> ./tma_C/log.txt <==
+user_max= 7000
+extra_users_len/min_cas_length= 1 5
+edge_thr,lookback_count= 5 5
+cascade_count, max_iter, num_negative_samples= 992 10 None
+==> ./tma_C/log.txt <==
+   accuracy  f1-score  precision    recall  support
+0  0.467532  0.474359   0.447942  0.504087      367
+1  0.467532  0.460526   0.490196  0.434243      403
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.532468  0.502762   0.509804  0.495913      367
+1  0.532468  0.558824   0.552058  0.565757      403
+done evaluation of clustering accuracy at end at pi = [0.506702976388645, 0.49329702361135497], ll=-7065.445237915209.
+finished saving responsibilities.
+Program finished in 48.522 seconds
+
+
+==> ./tma_D/log.txt <==
+user_max= 7000
+extra_users_len/min_cas_length= 1 5
+edge_thr,lookback_count= 5 5
+cascade_count, max_iter, num_negative_samples= 992 10 None
+==> ./tma_D/log.txt <==
+   accuracy  f1-score  precision    recall  support
+0  0.455844  0.499403   0.444681  0.569482      367
+1  0.455844  0.403983   0.473333  0.352357      403
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.544156  0.473763   0.526667  0.430518      367
+1  0.544156  0.597938   0.555319  0.647643      403
+done evaluation of clustering accuracy at end at pi = [0.5587548941251207, 0.4412451058748793], ll=-7064.432360932972.
+finished saving responsibilities.
+Program finished in 48.153 seconds
+
+
+==> ./tma_E/log.txt <==
+user_max= 7000
+extra_users_len/min_cas_length= 0 1
+edge_thr,lookback_count= 5 5
+cascade_count, max_iter, num_negative_samples= 992 10 100
+==> ./tma_E/log.txt <==
+   accuracy  f1-score  precision    recall  support
+0  0.459887  0.517172   0.449912  0.608076      421
+1  0.459887  0.387179   0.477848  0.325431      464
+Flipped prediction groups
+   accuracy  f1-score  precision    recall  support
+0  0.540113  0.447761   0.522152  0.391924      421 (0.4757) comp_0 = label=1 (pi_label1 = 0.4757) (pi_comp0 = 0.53)
+1  0.540113  0.606002   0.550088  0.674569      464
+done evaluation of clustering accuracy at end at pi = [0.5319396792356762, 0.4680603207643238], ll=-7320.031591679629.
+finished saving responsibilities.
+
+0.4757
+Program finished in 63.074 seconds
+
+
+
+
+
+

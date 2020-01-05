@@ -16,7 +16,7 @@ if __name__ == '__main__':
     """Input setting
     --------------------
     """
-    data = 'twitter_ma'
+    data = 'all_kwon/kwon_copy_1'
     fake_component = 0
     
     pi_file = '../output/{}/pi.txt'
@@ -29,6 +29,17 @@ if __name__ == '__main__':
     sample_seeds_from = 'fake_infl'  # 'users', 'infl'
     num_simulations = 500
     obs_steps = None
+    
+    logf = open(log_file, 'w')
+    sys.stdout = data_io.Runlog(sys.stdout, logf)  # This will go to stdout and the file out.txt
+    
+    """Print info
+    """
+    print('K_num_edges', K_num_edges)
+    print('num_seedsets', num_seed_sets)
+    print('sample_from', sample_seeds_from)
+    print('num_sims', num_simulations)
+    print('obs_steps', obs_steps)
     
     """Load graph and activation probabilities (learned and saved from parameter estimation)
     And Load selected influential users for seed set sampling if needed (estimated for fake component as specified in input) 

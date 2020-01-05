@@ -20,7 +20,9 @@ class InfluenceEstimator(object):
         total_len = 0
         for cascade in cascades:
             total_len += len(cascade)
-        return total_len/len(cascades)
+        fs = total_len/len(cascades)
+        del cascades
+        return fs
     
     
     def get_expected_influence_per_timestep(self, seed_set, num_simulations):
@@ -39,11 +41,13 @@ class InfluenceEstimator(object):
         
         expected_cascade = np.mean(engagements, 0)
         std = np.std(engagements, 0)
+        del enagagements, cascades
         # cum = 1.0* np.cumsum(mean)
         # cumnorm = cum/np.max(cum)
         # print("Final expected size of cascade:", np.max(cum))
         # print("Max # tweets expected at any timestep:", np.max(mean))
         return expected_cascade, std  # exp_per_time, std_per_time
+        
         
     def get_expected_influence_for_multiple_seed_sets(self, seed_sets, num_simulations):
         generated = []
@@ -52,7 +56,9 @@ class InfluenceEstimator(object):
                                     self.act_prob_constant, self.obs_steps)
             generated += cascades
         cas_lengths = np.array([len(cascade) for cascade in generated])
-        return np.mean(cas_lengths), np.std(cas_lengths)
+        m, s = np.mean(cas_lengths), np.std(cas_lengths)
+        del cascades, generated, cas_lengths
+        return m, s
     
     
 class HeapObj(object):
@@ -115,4 +121,5 @@ def select_seeds_greedy_clef(k, num_nodes, influence_estimator, num_sims):
         print("selected %d " % (iteration+1), selected)
 
     print("End greedy seed selection in %0.2f" % (time.time() - start_time))
+    del marg_gain_heap, first_selected_seed, current_top_node_obj
     return selected_seeds, influence_selected_seeds

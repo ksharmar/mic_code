@@ -103,11 +103,12 @@ def run_diffusion(seeds, network, num_nodes, act_prob_constant, rounds=None):
                     # cascade[v] = current_round + 1
         t_active = tplus1_active
         current_round += 1
-
+     
     cascade = np.array(activated_at)
     active_u = np.nonzero(cascade)[0]
     active_t = cascade[active_u] - 1
     c = np.hstack([active_u.reshape(-1, 1), active_t.reshape(-1, 1)])
+    del activated_at, active_u, active_t, cascade, t_active, tplus1_active
     return c[c[:,1].argsort()] # shape=(None, 2) for active node ids and discrete times in cascade (sorted by time)
 
 
