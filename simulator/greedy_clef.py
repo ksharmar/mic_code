@@ -4,7 +4,7 @@ import time
 import sys
 sys.path.append("../")
 from simulator import dic_simulator
-
+import numpy as np
 
 class InfluenceEstimator(object):
 
@@ -51,8 +51,10 @@ class InfluenceEstimator(object):
         
     def get_expected_influence_for_multiple_seed_sets(self, seed_sets, num_simulations):
         generated = []
-        for seedset in seed_sets:
-            cascades = dic_simulate(seedset, num_simulations, self.graph, self.num_nodes, 
+        for i, seedset in enumerate(seed_sets):
+            if i % 10 == 0:
+                print('generating cascades for {}/{}th seed set'.format(i, len(seed_sets)))
+            cascades = dic_simulator.simulate(seedset, num_simulations, self.graph, self.num_nodes, 
                                     self.act_prob_constant, self.obs_steps)
             generated += cascades
         cas_lengths = np.array([len(cascade) for cascade in generated])

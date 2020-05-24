@@ -54,6 +54,26 @@ def get_engagement_counts(true_cascades, fake_cascades):
     return u_t, u_f, sorted_t, sorted_f
 
 
+def eng_count(train_cascades, train_labels):
+    true_cascades = np.array(train_cascades)[train_labels==0]
+    fake_cascades = np.array(train_cascades)[train_labels == 1]
+    print('t/f', len(true_cascades), len(fake_cascades))
+
+    u_t, u_f, sorted_t, sorted_f = get_engagement_counts(true_cascades, fake_cascades)
+    print('u_t, u_f, tot', len(u_t), len(u_f), len(u_t) + len(u_f))
+    
+    u = {**u_t , **u_f}
+    sorted_users = np.array(sorted(u.items(), key=operator.itemgetter(1), reverse=True), dtype=np.int32)
+    # sorted_users = np.concatenate([sorted_t, sorted_f], axis=0)
+    # users with engagements greater than 5
+    num_users_with_large_eng = len(sorted_users[sorted_users[:, 1] > 5])
+    print('users large eng > 5', num_users_with_large_eng)
+    num_users_with_large_eng = len(sorted_users[sorted_users[:, 1] > 10])
+    print('users large eng > 10', num_users_with_large_eng)
+    
+    return u_t, u_f, sorted_users
+
+
 def get_relative_appearance_in_fake(u_t, u_f, true_infl, fake_infl):
     # inputs contain user ids
     value_true, value_fake = [], []
@@ -91,8 +111,4 @@ def get_relative_appearance_in_fake(u_t, u_f, true_infl, fake_infl):
     # print(true_infl[ind])
     return vt, vf
     
-
-def find_tweetid_for_userid(list_userids):
-    
-    return list_tweetids
 

@@ -77,6 +77,58 @@ def getCascadeSequences_and_SeqLabel():
     np.savetxt(savepath + "train_labels.txt", np.array(labels), fmt="%d")
 
 
+def get_cascade_filenames_list():
+    #-----------------------------
+    
+    # savepath="./data/kwon/"
+    path="/meladyfs/newyork/krsharma/kdd_data/kwon/
+
+    # savepath="/meladyfs/newyork/krsharma/kdd_data/pheme-rnr-dataset/"
+    # path="/meladyfs/newyork/krsharma/kdd_data/pheme-rnr-dataset/"
+
+    # savepath="/meladyfs/newyork/krsharma/kdd_data/twitter-ma/"
+    # path="/meladyfs/newyork/krsharma/kdd_data/twitter-ma/"
+
+    # savepath="/meladyfs/newyork/krsharma/kdd_data/twitter-qian/"
+    # path="/meladyfs/newyork/krsharma/kdd_data/twitter-qian/"
+
+    #-----------------------------
+    
+    # links = "links.txt" # uid_A (follows) uid_B
+    cascades = "Tweets/" # uid, tid, content, time (each file is a diffusion cascade)
+    # user_feats = "sub_user_info_share.txt" # uid, nbfollowers, nbfollowees, tweets 
+    # user_feats = "user_data.csv"
+    
+    #----------------------------- GET (uid, time)
+
+    diff_cascades = {}
+    labels = []
+
+    for tweetsfile in os.listdir(path+cascades):
+        f = open(path+cascades+tweetsfile, "r")
+        # print tweetsfile
+        print tweetsfile
+        
+    #----------------------------- Write (uid, time, ...) and labels
+
+    w = open(savepath+"/train_cascades.txt", "w")
+    for tweetsfile, tweets in diff_cascades.items():
+        ulist = tweets[0]
+        tlist = tweets[1]
+        label = 1 if tweetsfile.strip().split("_")[0] == 'R' else 0
+
+        wstring = ""
+        for i in range(len(ulist)):
+            wstring+= str(ulist[i])+"-"+str(tlist[i])+" "
+        # w.write(" ".join(tweets, rel_tslist) + "\n")
+        # print wstring.strip()
+        if wstring.strip() == "": continue
+        labels.append(label)
+        w.write(wstring.strip() + "\n")
+
+    np.savetxt(savepath + "train_labels.txt", np.array(labels), fmt="%d")
+    
+    
     
 def fixFormat_dash_to_comma_CascadesFile():
     f = open('train_cascades.txt')

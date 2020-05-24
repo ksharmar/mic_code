@@ -20,7 +20,7 @@ if __name__ == '__main__':
     --------------------
     """
     data = 'kwon'
-    out = 'all_kwon/kwon_init'
+    out = 'all_kwon/kwon_100'
     cascades_filename = '../data/{}/cascades.txt'.format(data)
     labels_filename = '../data/{}/labels.txt'.format(data)
     train_cascade_ids_filename = '../data/{}/train_ids.txt'.format(data)
@@ -33,8 +33,8 @@ if __name__ == '__main__':
     user_max = 2930  # atleast 5 engagements
     extra_users_len, min_cas_length = 0, 1   
     
-    edge_thr = 5
-    lookback_count = 5
+    edge_thr = 0  # 5
+    lookback_count = 100  # 5
     
     cascade_count = 111
     max_iter = 10
@@ -94,5 +94,8 @@ if __name__ == '__main__':
     gamma_0, gamma_1, targets = last_evaluation(pi0, pi1, base_graph, train_cascades, train_labels, num_negative_samples, lookback_count)
     stacked = np.vstack([gamma_0, gamma_1, targets, filtered_train_cids]).transpose()
     np.savetxt(save_resp_file, stacked)
+    
+    gamma_0, gamma_1, targets = last_evaluation(pi0, pi1, base_graph, test_cascades, test_labels, num_negative_samples, lookback_count)
+    
     print('finished saving responsibilities.')
     print("Program finished in {} seconds".format(round(time.time()-start, 3)))

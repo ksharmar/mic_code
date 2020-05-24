@@ -22,8 +22,8 @@ def _read_cascades_file(cascades_filename):
         cascade = np.vstack([u, t]).transpose()
         cascades.append(cascade)
     f.close()
-    return cascades
-
+    return cascades   
+    
 
 def _read_train_cascade_ids_file(train_cascade_ids_filename):
     """
@@ -323,4 +323,5 @@ def load_data_for_parameter_estimation(cascades_filename, labels_filename,
     print("creating base_graph...")
     # create base graph from train cascades
     base_graph = _create_base_graph(train_cascades, idx2u, lookback_count, edge_thr)
-    return u2idx, idx2u, train_cascades, train_labels, filtered_train_cids, test_cascades, test_labels, base_graph
+    return u2idx, idx2u, train_cascades, train_labels, \
+        filtered_train_cids, test_cascades, test_labels, base_graph

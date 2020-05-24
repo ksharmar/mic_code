@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 # np.random.seed(0)
-import sys
+import sys, time
 sys.path.append("../")
 import snap
 import pandas as pd
@@ -16,25 +16,28 @@ if __name__ == '__main__':
     """Input setting
     --------------------
     """
-    data = 'all_kwon/kwon_copy_1'
-    fake_component = 0
+    out = 'all_tma/tma_E'
+   
+    pi_file = '../output/{}/pi.txt'.format(out)
+    edges_file = '../output/{}/learned_graph.tsv'.format(out)
+    idx2u_file = '../output/{}/idx2u.txt'.format(out)
+    infl_users_file = '../output/{}/selected_influential_users.tsv'.format(out)
     
-    pi_file = '../output/{}/pi.txt'
-    edges_file = '../output/{}/learned_graph.tsv'
-    idx2u_file = '../output/{}/idx2u.txt'
-    infl_users_file = '../output/{}/selected_influential_users.tsv'
+    log_file = '../output/{}/edge_intervention_log.txt'.format(out)
      
-    K_num_edges = [20, 50, 100, 500]  # num of edges to remove 
+    fake_component = 0
+    K_num_edges = [10, 20, 50, 80, 100]  # num of edges to remove 
     num_seed_sets = 100
-    sample_seeds_from = 'fake_infl'  # 'users', 'infl'
-    num_simulations = 500
-    obs_steps = None
+    sample_seeds_from = 'users'  # 'users', 'infl'
+    num_simulations = 10
+    obs_steps = 50
     
     logf = open(log_file, 'w')
     sys.stdout = data_io.Runlog(sys.stdout, logf)  # This will go to stdout and the file out.txt
     
     """Print info
     """
+    print('fake_component', fake_component)
     print('K_num_edges', K_num_edges)
     print('num_seedsets', num_seed_sets)
     print('sample_from', sample_seeds_from)
@@ -47,17 +50,17 @@ if __name__ == '__main__':
     """
     pi0, pi1, base_graph, idx2u, u2idx = data_io.load_estimated_parameters(pi_file, edges_file, idx2u_file)
     base_df = data_io.load_base_graph_as_dataframe(edges_file)
-    fake_influential_users = data_io.load_selected_infl_users(infl_users_file, component=fake_component)
-    true_influential_users = data_io.load_selected_infl_users(infl_users_file, component=1-fake_component)
+    # fake_influential_users = data_io.load_selected_infl_users(infl_users_file, component=fake_component)
+    # true_influential_users = data_io.load_selected_infl_users(infl_users_file, component=1-fake_component)
     num_nodes = base_graph.GetNodes()
     assert num_nodes == len(idx2u), 'inconsistent num of nodes in base_graph and in idx2u'
     
     """Sample seed sets
     """
     if sample_seeds_from == 'users':
-        seed_sets = sample_seed_sets(np.arange(len(idx2u)), alpha=2.5, num_seed_sets=num_seed_sets)
+        seed_sets = sample_seed_sets(np.arange(len(idx2u)), alpha=2.5, num_seedsets=num_seed_sets)
     elif sample_seeds_from == 'fake_infl':
-        seed_sets = sample_seed_sets(fake_influential_users, alpha=2.5, num_seed_sets=num_seed_sets)
+        seed_sets = sample_seed_sets(fake_influential_users, alpha=2.5, num_seedsets=num_seed_sets)
     elif sample_seeds_from == 'infl':
         seed_sets = sample_seed_sets(list(fake_influential_users) + list(true_influential_users), alpha=2.5, num_seed_sets=num_seed_sets)
     else:

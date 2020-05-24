@@ -3,7 +3,7 @@
 import snap
 import numpy as np
 # np.random.seed(0)
-
+const = 10e-5
 
 def train(base_graph, train_cascades, num_negative_samples=None, lookback_count=None, \
     max_iter=100, freq_convergence_test=10):
@@ -63,10 +63,11 @@ def train(base_graph, train_cascades, num_negative_samples=None, lookback_count=
                 temp_sum += 1.0 / _computePv(v, train_cascades[cascade_ind], base_graph,
                     lookback_count, index_dict_list[cascade_ind])
             ratio = base_graph.GetFltAttrDatE(EI, "ratio")
-            act_prob = base_graph.GetFltAttrDatE(EI, "act_prob")
+            act_prob = base_graph.GetFltAttrDatE(EI, "act_prob_0")
             updated_act_prob = ratio * act_prob * temp_sum
             assert(updated_act_prob >= 0.0 and updated_act_prob <= 1.0)
-            base_graph.AddFltAttrDatE(EI, updated_act_prob, "act_prob")
+            base_graph.AddFltAttrDatE(EI, updated_act_prob, "act_prob_0")
+        last_evaluation(base_graph, train_cascades, num_negative_samples, lookback_count)
     print("done: training")
 
 
@@ -89,7 +90,7 @@ def _init_train(base_graph):
     Init for EM: Set random activation probabilties
     and the ratio which is used in analytic form.
     """
-    base_graph.AddFltAttrE("act_prob")  # nothing happens if it already exists
+    base_graph.AddFltAttrE("act_prob_0")  # nothing happens if it already exists
     base_graph.AddFltAttrE("ratio")
 
     # set random act_prob and fixed ratio used in analytical formula
@@ -98,10 +99,11 @@ def _init_train(base_graph):
         suvpl_str = base_graph.GetStrAttrDatE(EI, "suvpl")
         suvmi_len = 0 if suvmi_str == '' else len(suvmi_str.split(","))
         suvpl_len = 0 if suvpl_str == '' else len(suvpl_str.split(","))
-        assert suvmi_len + suvpl_len > 0, 'length of suvmi + suvpl should be atleast 1'
-        r = 1.0 / (suvmi_len + suvpl_len)
+        # assert suvmi_len + suvpl_len > 0, 'length of suvmi + suvpl should be atleast 1'
+        # TODO get back assertion and remove 10e-5 print(suvmi_len + suvpl_len)
+        r = 1.0 / (10e-5 + suvmi_len + suvpl_len)
         base_graph.AddFltAttrDatE(EI, r, "ratio")
-        base_graph.AddFltAttrDatE(EI, np.random.rand(), "act_prob")
+        base_graph.AddFltAttrDatE(EI, np.random.rand(), "act_prob_0")
 
 
 def _computePv(v, cascade, base_graph, lookback_count, index_dict):
@@ -118,9 +120,91 @@ def _computePv(v, cascade, base_graph, lookback_count, index_dict):
     assert len(ulist) > 0
     prod = 1.0
     for u in ulist:
+        u = int(u); v = int(v)
         if not base_graph.IsEdge(u, v):
             continue
         EId = base_graph.GetEId(u, v)  # returns an int edge id
-        act_prob_uv =  base_graph.GetFltAttrDatE(EId, "act_prob")
+        act_prob_uv =  base_graph.GetFltAttrDatE(EId, "act_prob_0")
         prod *= (1.0 - act_prob_uv)
     return 1.0 - prod  # +10e-5
+
+
+
+
+
+
+
+
+def _compute_ll(cascade, base_graph, lookback_count, index_dict, set_required_v_for_S, num_negative_samples):
+    """
+    Returns log-likelihood of given cascade under component IC model.
+    """
+    c0_ll = 0.0
+    num_nodes = base_graph.GetNodes()
+    c0_prod_v_for_S = np.ones((num_nodes))
+    
+    # Compute Eqn 6: Saito et al (p_nodeV_cascadeS)= 1 - Prod_influencers:u (1-P_u,v)
+    # node iterator of node id = u (needs int not np.int)
+    
+    for u in index_dict:
+        u_NI = base_graph.GetNI(int(u))  
+        for v in u_NI.GetOutEdges():
+            EI = base_graph.GetEI(int(u), int(v))
+            attr0 = base_graph.GetFltAttrDatE(EI, "act_prob_0")
+            if v in index_dict:
+                # both are active in S, and we need u to be within lookback of v
+                tu = index_dict[u]
+                tv = index_dict[v]
+                if tu <= tv - 1 and \
+                    (lookback_count is None or tv <= tu + lookback_count):
+                    c0_prod_v_for_S[v] *= 1 - attr0
+            else:
+                # v inactive in cascade, u active in cascade
+                c0_prod_v_for_S[v] *= 1 - attr0
+    
+    # sum up the values for log likelihood (over active nodes in S) except seed node
+    active_users_in_S = cascade[1:, 0]
+    c0_ll += np.log(const + 1 - c0_prod_v_for_S[active_users_in_S]).sum()
+    
+    # sum up the values for log likelihood (over inactive users given S)
+    if num_negative_samples is not None:
+        full_users = np.arange(num_nodes)
+        inactive_users = set(full_users) - set(cascade[:, 0])
+        chosen_inactive = np.random.choice(list(inactive_users), num_negative_samples, replace=False)
+        mask = np.zeros((num_nodes), dtype=bool)
+        mask[chosen_inactive] = True
+        c0_ll += np.log(const + c0_prod_v_for_S[mask]).sum()
+    else:
+        mask = np.ones((num_nodes), dtype=bool)
+        mask[cascade[:, 0]] = False
+        c0_ll += np.log(const + c0_prod_v_for_S[mask]).sum()
+
+    # Returning required pv_for_S
+    if set_required_v_for_S:
+        dict_computed_pv_for_S = {}
+        for v in set_required_v_for_S:  # S stands for cascade sequence S
+            dict_computed_pv_for_S[v] = 1 - c0_prod_v_for_S[v]
+    else:
+        dict_computed_pv_for_S = None
+    return c0_ll, dict_computed_pv_for_S
+
+def last_evaluation(base_graph, train_cascades, num_negative_samples=None, lookback_count=None):
+    """
+    Updating the responsibilities and clustering after last M-step.
+    """
+    # set index_dict_list to map nodeid to location/index in each cascade (fast access)
+    index_dict_list = []
+    for cascade in train_cascades:
+        dict_ = {}
+        users = cascade[:, 0]
+        dict_ = dict(zip(users, np.arange(len(users))))
+        index_dict_list.append(dict_)
+    print('done setting index dict')
+
+    # E-step
+    ll_cascades = 0
+    for i, cascade in enumerate(train_cascades):
+        ll_cascade_0, _ = _compute_ll(
+            cascade, base_graph, lookback_count, index_dict_list[i], None, num_negative_samples)
+        ll_cascades += ll_cascade_0
+    print('done evaluation of clustering accuracy at end ll={}.'.format(ll_cascades))

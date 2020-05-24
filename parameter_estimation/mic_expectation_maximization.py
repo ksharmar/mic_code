@@ -321,7 +321,7 @@ def last_evaluation(pi0, pi1, base_graph, train_cascades, train_labels, num_nega
 
     pred_train_labels = (gamma1_list >= 0.5)*1
     _metric(pred_train_labels, train_labels)
-    print('done evaluation of clustering accuracy at end at pi = [{}, {}], ll={}.'.format(pi0, pi1, ll_cascades))
+    print('done evaluation of clustering accuracy at end at pi = [{}, {}], ll={}, {}.'.format(pi0, pi1, ll_cascades, ll_cascades/len(train_cascades)))
     return np.array(gamma0_list), np.array(gamma1_list), np.array(train_labels)
 
 

@@ -123,7 +123,7 @@ def convert_dataframe_to_base_graph(base_df, idx2u):
 
 def load_base_graph_as_dataframe(edges_file):
     # TSV(u, v, act_0, act_1)
-    return pd.load_csv(edges_file, header=0, sep='\t')
+    return pd.read_csv(edges_file, header=0, sep='\t')
 
 
 def get_act_prob_from_dataframe(base_df, component):
