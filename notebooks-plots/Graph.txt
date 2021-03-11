@@ -1,7 +1,0 @@
-Graph: Directed Multigraph
-  Nodes:                    1988
-  Edges:                    48274
-  Zero Deg Nodes:           0
-  Zero InDeg Nodes:         69
-  Zero OutDeg Nodes:        14
-  NonZero In-Out Deg Nodes: 1905

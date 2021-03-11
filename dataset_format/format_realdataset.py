@@ -9,16 +9,16 @@ def getCascadeSequences_and_SeqLabel():
     #-----------------------------
     
     # savepath="./data/kwon/"
-    # path="/Users/karishmasharma/Desktop/datasets_fakenews/kwon_dataset/"
+    # path="kwon_dataset/"
 
-    # savepath="/meladyfs/newyork/krsharma/kdd_data/pheme-rnr-dataset/"
-    # path="/meladyfs/newyork/krsharma/kdd_data/pheme-rnr-dataset/"
+    # savepath="pheme-rnr-dataset/"
+    # path="pheme-rnr-dataset/"
 
-    savepath="/meladyfs/newyork/krsharma/kdd_data/twitter-ma/"
-    path="/meladyfs/newyork/krsharma/kdd_data/twitter-ma/"
+    savepath="twitter-ma/"
+    path="twitter-ma/"
 
-    # savepath="/meladyfs/newyork/krsharma/kdd_data/twitter-qian/"
-    # path="/meladyfs/newyork/krsharma/kdd_data/twitter-qian/"
+    # savepath="twitter-qian/"
+    # path="twitter-qian/"
 
     #-----------------------------
     
@@ -81,16 +81,16 @@ def get_cascade_filenames_list():
     #-----------------------------
     
     # savepath="./data/kwon/"
-    path="/meladyfs/newyork/krsharma/kdd_data/kwon/
+    path="kwon/
 
-    # savepath="/meladyfs/newyork/krsharma/kdd_data/pheme-rnr-dataset/"
-    # path="/meladyfs/newyork/krsharma/kdd_data/pheme-rnr-dataset/"
+    # savepath="pheme-rnr-dataset/"
+    # path="pheme-rnr-dataset/"
 
-    # savepath="/meladyfs/newyork/krsharma/kdd_data/twitter-ma/"
-    # path="/meladyfs/newyork/krsharma/kdd_data/twitter-ma/"
+    # savepath="twitter-ma/"
+    # path="twitter-ma/"
 
-    # savepath="/meladyfs/newyork/krsharma/kdd_data/twitter-qian/"
-    # path="/meladyfs/newyork/krsharma/kdd_data/twitter-qian/"
+    # savepath="twitter-qian/"
+    # path="twitter-qian/"
 
     #-----------------------------
     

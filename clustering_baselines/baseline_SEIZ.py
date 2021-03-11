@@ -164,9 +164,9 @@ def main():
     # Create parser
     parser = argparse.ArgumentParser(description='SEIZ')
     # Add arguments
-    parser.add_argument('-d', '--datapath', help='cascades file', default='/home/krsharma/kdd_netinference/twitter-ma/train_cascades.txt')
-    parser.add_argument('-label', '--labelpath', help='labels file', default='/home/krsharma/kdd_netinference/twitter-ma/train_labels.txt')
-    parser.add_argument('-s', '--savepath', help='results file', default='/home/krsharma/kdd_netinference/twitter-ma/seiz_results2.txt')
+    parser.add_argument('-d', '--datapath', help='cascades file', default='/home///twitter-ma/train_cascades.txt')
+    parser.add_argument('-label', '--labelpath', help='labels file', default='/home///twitter-ma/train_labels.txt')
+    parser.add_argument('-s', '--savepath', help='results file', default='/home///twitter-ma/seiz_results2.txt')
     parser.add_argument('-l', '--lag', help='', default=24, type=float)
     parser.add_argument('-c', '--cutoff', help='cutoff', default=10000, type=int)
     # Parse arguments

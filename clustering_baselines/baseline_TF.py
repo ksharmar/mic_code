@@ -146,5 +146,5 @@ def main():
 if __name__=="__main__":
     main()
     
-    # python baseline_TF.py -d '/meladyfs/newyork/krsharma/kdd_data/kwon/sentiments.txt' -r './tf_kwon_results.pkl'
-    # python baseline_TF.py -d '/meladyfs/newyork/krsharma/kdd_data/twitter-ma/twitter-ma_10k.csv' -r './tf_tma_results.pkl'
+    # python baseline_TF.py -d 'kwon/sentiments.txt' -r './tf_kwon_results.pkl'
+    # python baseline_TF.py -d 'twitter-ma/twitter-ma_10k.csv' -r './tf_tma_results.pkl'
